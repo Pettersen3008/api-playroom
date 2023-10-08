@@ -6,6 +6,10 @@ pub struct User {
     pub id: uuid::Uuid,
     pub name: String,
 }
+#[derive(Debug, Serialize, Deserialize)]
+pub struct NewUser {
+    pub name: String,
+}
 
 impl User {
     pub fn new(name: String) -> Self {

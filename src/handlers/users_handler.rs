@@ -5,7 +5,7 @@ use axum::{
 };
 use sqlx::PgPool;
 
-use crate::models::user::User;
+use crate::models::user::{User, NewUser};
 
 pub async fn get_all_users(
     extract::State(pool): extract::State<PgPool>,
@@ -26,16 +26,17 @@ pub async fn get_all_users(
 
 pub async fn create_user(
     extract::State(pool): extract::State<PgPool>,
-    Json(payload): Json<User>,
+    Json(payload): Json<NewUser>,
 ) -> Result<(StatusCode, Json<User>), StatusCode> {
     let user = User::new(payload.name);
 
     let res = sqlx::query(
         r#"
-        INSERT INTO users (name)
-        VALUES ($1)
+        INSERT INTO users (id, name)
+        VALUES ($1, $2)
         "#,
     )
+    .bind(&user.id)
     .bind(&user.name)
     .execute(&pool)
     .await;
@@ -48,8 +49,8 @@ pub async fn create_user(
 
 pub async fn update_user(
     extract::State(pool): extract::State<PgPool>,
-    Path(id): Path<String>,
-    Json(payload): Json<User>,
+    Path(id): Path<uuid::Uuid>,
+    Json(payload): Json<NewUser>,
 ) -> Result<StatusCode, StatusCode> {
     let res = sqlx::query(
         r#"
@@ -71,7 +72,7 @@ pub async fn update_user(
 
 pub async fn delete_user(
     extract::State(pool): extract::State<PgPool>,
-    Path(id): Path<String>,
+    Path(id): Path<uuid::Uuid>,
 ) -> Result<StatusCode, StatusCode> {
     let res = sqlx::query(
         r#"

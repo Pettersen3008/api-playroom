@@ -1,27 +1,27 @@
 -- Add migration script here
 CREATE TABLE leagues (
-    id SERIAL PRIMARY KEY,
+    id UUID PRIMARY KEY,
     name TEXT NOT NULL,
     unique (name)
 );
 
 CREATE TABLE users (
-    id SERIAL PRIMARY KEY,
+    id UUID PRIMARY KEY,
     name TEXT NOT NULL,
     unique (name)
 );
 
 CREATE TABLE participants (
-    leagueid INT REFERENCES leagues(id),
-    userid INT REFERENCES users(id),
+    leagueid UUID REFERENCES leagues(id),
+    userid UUID REFERENCES users(id),
     PRIMARY KEY (leagueid, userid)
 );
 
 CREATE TABLE matches (
-    id SERIAL PRIMARY KEY,
-    leagueId INT REFERENCES leagues(id),
-    homeUserId INT REFERENCES users(id),
-    awayUserId INT REFERENCES users(id),
+    id UUID PRIMARY KEY,
+    leagueId UUID REFERENCES leagues(id),
+    homeUserId UUID REFERENCES users(id),
+    awayUserId UUID REFERENCES users(id),
     homeScore INT,
     awayScore INT,
     dateScheduled TIMESTAMPTZ NOT NULL,
